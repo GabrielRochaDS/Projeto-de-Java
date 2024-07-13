@@ -1,5 +1,7 @@
 package com.gabrielrocha;
 
+import com.gabrielrocha.exception.EntidadeNaoEncontradaException;
+import com.gabrielrocha.exception.RemocaoNaoAutorizada;
 import com.gabrielrocha.model.Aluno;
 import com.gabrielrocha.model.Inscricao;
 import com.gabrielrocha.service.AlunoService;
@@ -41,30 +43,51 @@ public class PrincipalAluno {
 
                 case 2 -> {
                     idAluno = Console.readInt("Informe o Id do aluno a ser removido:");
-                    alunoService.remover(idAluno);
+
+                    try {
+                        alunoService.recuperarPorId(idAluno);
+                    }catch (EntidadeNaoEncontradaException e){
+                        System.out.println('\n' + e.getMessage());
+                        break;
+                    }
+
+
+                    try {
+                        alunoService.remover(idAluno);
+                        System.out.println("Aluno com id " + idAluno + " removido com ssucesso" + '\n');
+                    } catch (RemocaoNaoAutorizada e) {
+                        System.out.println('\n' + e.getMessage());
+                    }
+
+
                 }
 
                 case 3-> {
                         for(Aluno aluno: alunoService.recuperarTodos()){
                             System.out.println(aluno.toString() + '\n');
+                            if(!aluno.getInscricaos().isEmpty()){
+                                System.out.println("Inscricoes do aluno:" + '\n');
+                                for (Inscricao inscricao: aluno.getInscricaos()){
+                                    System.out.println("Disciplina: " + inscricao.getTurma().getDisciplina().getNome() + '\n' + inscricao.toString() );
+                                }
+                            }
                         }
                 }
 
                 case 4->{
-                    idAluno = Console.readInt("Informe o Id do aluno para listar as inscricoes do mesmo:");
-                    List<Inscricao> lista = alunoService.recuperarPorId(idAluno).getInscricaos();
-                    if(lista.isEmpty()){
-                        System.out.println("O aluno nao esta inscrito em nenhuma matéria" + "\n");
-                    }
-                    else {
-                        for(Inscricao inscricao: lista){
+                    idAluno = Console.readInt("Informe o Id do aluno para listar as inscricoes do mesmo:" + '\n');
 
+                    try {
+                        List<Inscricao> lista = alunoService.recuperarPorId(idAluno).getInscricaos();
+                        for(Inscricao inscricao: lista){
                             System.out.println(inscricao.toString());
                         }
+
+                    } catch (EntidadeNaoEncontradaException e){
+                        System.out.println('\n' + e.getMessage());
                     }
 
                 }
-
 
                 case 5->{
                     continua = false;

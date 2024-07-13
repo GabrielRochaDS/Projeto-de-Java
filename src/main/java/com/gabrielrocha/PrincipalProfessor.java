@@ -1,6 +1,7 @@
 package com.gabrielrocha;
 
-import com.gabrielrocha.model.Aluno;
+import com.gabrielrocha.exception.EntidadeNaoEncontradaException;
+import com.gabrielrocha.exception.RemocaoNaoAutorizada;
 import com.gabrielrocha.model.Professor;
 import com.gabrielrocha.model.Turma;
 import com.gabrielrocha.service.ProfessorService;
@@ -28,19 +29,38 @@ public class PrincipalProfessor {
 
             switch (opcao){
                 case 1-> {
-                    nome = Console.readLine("Informe o nome do aluno: ");
-                    email = Console.readLine("Informe o email do aluno: ");
+                    nome = Console.readLine("Informe o nome do professor: ");
+                    email = Console.readLine("Informe o email do professor: ");
 
                     Professor umProfessor = new Professor(nome, email);
                     professorService.incluir(umProfessor);
                 }
                 case 2-> {
-                    id = Console.readInt("Digite o id do Professor a ser removida: ");
-                    professorService.remover(id);
+                    id = Console.readInt("Digite o id do Professor a ser removido: ");
+
+                    try {
+                        professorService.recuperarPorId(id);
+                    }catch (EntidadeNaoEncontradaException e){
+                        System.out.println('\n' + e.getMessage());
+                        break;
+                    }
+
+                    try {
+                        professorService.remover(id);
+                    } catch (RemocaoNaoAutorizada e) {
+                        System.out.println('\n' + e.getMessage());
+                    }
+
                 }
                 case 3-> {
                     for(Professor professor: professorService.recuperarTodos()){
                         System.out.println(professor.toString());
+                        if(!professor.getTurma().isEmpty()){
+                            System.out.println("Turmas do professor:");
+                            for(Turma turma: professor.getTurma()){
+                                System.out.println(turma.getDisciplina().getNome()+ '\n' + turma.toString() + '\n');
+                            }
+                        }
                     }
                 }
                 case 4 ->{

@@ -1,10 +1,9 @@
 package com.gabrielrocha.service;
 
-import com.gabrielrocha.dao.AlunoDAO;
 import com.gabrielrocha.dao.InscricaoDAO;
-import com.gabrielrocha.model.Aluno;
-import com.gabrielrocha.model.Disciplina;
-import com.gabrielrocha.model.Inscricao;
+import com.gabrielrocha.exception.EntidadeNaoEncontradaException;
+import com.gabrielrocha.exception.RemocaoNaoAutorizada;
+import com.gabrielrocha.model.*;
 import com.gabrielrocha.util.FabricaDeDaos;
 
 import java.util.List;
@@ -22,7 +21,13 @@ public class InscricaoService {
             }
         }
         if(contador == inscricao.getTurma().getDisciplina().getRequisitos().size()){
-            inscricaoDAO.incluir(inscricao.getId(), inscricao);
+            inscricaoDAO.incluir(inscricao);
+
+            Aluno aluno = inscricao.getAluno();
+            aluno.getInscricaos().add(inscricao);
+
+            Turma turma = inscricao.getTurma();
+            turma.getInscricaos().add(inscricao);
         }
         else {
             System.out.println("O aluno nao possui todos os requisitos para a inscrição" + '\n');
@@ -32,7 +37,7 @@ public class InscricaoService {
 
     public void remover(int id){
         if( inscricaoDAO.recuperarPorId(id).getTurma() != null || inscricaoDAO.recuperarPorId(id).getAluno() != null  ){
-            System.out.println("Remoção nao autorizada" + '\b');
+            throw new RemocaoNaoAutorizada("Remocao nao autorizada pois o mesmo esta associado a outro elemento");
         }
         else{
             System.out.println("Inscricao " + id + "Removida" + '\n');
@@ -41,13 +46,12 @@ public class InscricaoService {
     }
 
     public void alterar(Inscricao inscricao){
-        inscricaoDAO.alterar(inscricao.getId(), inscricao);
+        inscricaoDAO.alterar(inscricao);
     }
 
     public Inscricao recuperarPorId(int id){
         if(inscricaoDAO.recuperarPorId(id) == null){
-            System.out.println("Inscricao nao existe");
-            return null;
+            throw new EntidadeNaoEncontradaException("Nao existe inscicao com esse id");
         }
         else {
             return inscricaoDAO.recuperarPorId(id);

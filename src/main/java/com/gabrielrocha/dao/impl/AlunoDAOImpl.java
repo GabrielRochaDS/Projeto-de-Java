@@ -4,5 +4,5 @@ import com.gabrielrocha.dao.AlunoDAO;
 import com.gabrielrocha.model.Aluno;
 
 
-public class AlunoDAOImpl extends DAOGenericoImpl<Integer, Aluno> implements AlunoDAO {
+public class AlunoDAOImpl extends DAOGenericoImpl<Aluno> implements AlunoDAO {
 }

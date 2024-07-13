@@ -1,5 +1,6 @@
 package com.gabrielrocha;
 
+import com.gabrielrocha.exception.EntidadeNaoEncontradaException;
 import com.gabrielrocha.model.Disciplina;
 import com.gabrielrocha.model.Professor;
 import com.gabrielrocha.model.Turma;
@@ -40,26 +41,49 @@ public class PrincipalTurma {
                         System.out.println("Professor: " + aux.getNome()+ "  id: " + aux.getId());
                     }
                     idProfessor = Console.readInt('\n' + "Digite o id do professor da turma dentre os professores acima: ");
+                    Professor professor = null;
+                    try {
+                        professor = professorService.recuperarPorId(idProfessor);
+                    } catch (EntidadeNaoEncontradaException e){
+                        System.out.println('\n' + e.getMessage());
+                        break;
+                    }
+
 
                     List<Disciplina> disciplinas = disciplinaService.recuperarTodos();
+                    System.out.println();
                     for(Disciplina aux: disciplinas){
                         System.out.println("Disciplina: " + aux.getNome()+ "  id: " + aux.getId());
                     }
                     idDisciplina = Console.readInt('\n' + "Digite o id da disciplina da turma dentre as Disciplinas acima: ");
+                    Disciplina disciplina = null;
+                    try {
+                        disciplina = disciplinaService.recuperarPorId(idDisciplina);
+                    } catch (EntidadeNaoEncontradaException e){
+                        System.out.println('\n' + e.getMessage());
+                        break;
+                    }
+
                     ano = Console.readInt("Digite o ano da turma: ");
                     periodo = Console.readInt("Digite o periodo da turma: ");
-                    Disciplina disciplina = disciplinaService.recuperarPorId(idDisciplina);
-                    Professor professor = professorService.recuperarPorId(idProfessor);
+
+
+
                     Turma turma = new Turma(ano, periodo, professor, disciplina);
                     turmaService.incluir(turma);
                 }
                 case 2->{
                     int idTurma = Console.readInt("Digite o id da turma a ser removida: ");
-                    turmaService.remover(idTurma);
+                    try {
+                        turmaService.remover(idTurma);
+                    } catch (EntidadeNaoEncontradaException e){
+                        System.out.println('\n' + e.getMessage());
+                        break;
+                    }
                 }
                 case 3->{
                     for(Turma turma: turmaService.recuperarTodos()){
-                        System.out.println( turma.getProfessor().getNome() + '\n' + turma.getDisciplina().getNome() + '\n' + turma.toString() + '\n' + "alunos inscritos: " + turma.getInscricaos().size());
+                        System.out.println( turma.getProfessor().getNome() + '\n'  + '\n' + turma.toString() + '\n' + "alunos inscritos: " + turma.getInscricaos().size() + '\n');
                     }
                 }
                 case 4 ->{

@@ -1,14 +1,19 @@
 package com.gabrielrocha;
 
 import com.gabrielrocha.dao.InscricaoDAO;
+import com.gabrielrocha.exception.EntidadeNaoEncontradaException;
+import com.gabrielrocha.exception.RemocaoNaoAutorizada;
 import com.gabrielrocha.model.Aluno;
 import com.gabrielrocha.model.Inscricao;
+import com.gabrielrocha.model.Professor;
 import com.gabrielrocha.model.Turma;
 import com.gabrielrocha.service.AlunoService;
 import com.gabrielrocha.service.InscricaoService;
 import com.gabrielrocha.service.TurmaService;
 import com.gabrielrocha.util.FabricaDeDaos;
 import corejava.Console;
+
+import java.util.List;
 
 public class PrincipalInscricao {
     private final InscricaoService inscricaoService = new InscricaoService();
@@ -41,18 +46,56 @@ public class PrincipalInscricao {
                 case 1->{
                     data = Console.readLine("Informe a data da inscricao: ");
                     nota = Console.readInt("Informe a nota do aluno: ");
-                    idAluno = Console.readInt("Informe o id do aluno a ser inscrito: ");
+
+                    List<Aluno> alunos = alunoService.recuperarTodos();
+                    for(Aluno aux: alunos){
+                        System.out.println("Aluno: " + aux.getNome()+ "  id: " + aux.getId());
+                    }
+                    idAluno = Console.readInt('\n' + "Digite o id do aluno a ser inscrito: " + '\n');
+                    Aluno aluno = null;
+                    try {
+                        aluno = alunoService.recuperarPorId(idAluno);
+                    } catch (EntidadeNaoEncontradaException e){
+                        System.out.println('\n' + e.getMessage());
+                        break;
+                    }
+
+                    List<Turma> turmas = turmaService.recuperarTodos();
+                    for(Turma aux: turmas){
+                        System.out.println("Turma id: " + aux.getId() + "  Nome: " + aux.getDisciplina().getNome());
+                    }
                     idTurma = Console.readInt("Informe o id da turma a ser inscrita: ");
-                    Turma turma = turmaService.recuperarPorId(idAluno);
-                    Aluno aluno = alunoService.recuperarPorId(idAluno);
+                    Turma turma = null;
+                    try {
+                        turma = turmaService.recuperarPorId(idTurma);
+                    } catch (EntidadeNaoEncontradaException e){
+                        System.out.println('\n' + e.getMessage());
+                        break;
+                    }
+
+
                     umaInscricao = new Inscricao(aluno, turma, data, nota);
                     inscricaoService.incluir(umaInscricao);
-                    alunoService.recuperarPorId(idAluno).getInscricaos().add(umaInscricao);
+
                 }
 
                 case 2->{
                     idInscricao = Console.readInt("Informe o id da inscricao a ser removida: ");
-                    inscricaoService.remover(idInscricao);
+
+                    try {
+                        inscricaoService.recuperarPorId(idInscricao);
+                    }catch (EntidadeNaoEncontradaException e){
+                        System.out.println('\n' + e.getMessage());
+                        break;
+                    }
+
+                    try {
+                        inscricaoService.remover(idInscricao);
+                    } catch (RemocaoNaoAutorizada e) {
+                        System.out.println('\n' + e.getMessage());
+                    }
+
+
                 }
 
                 case 3->{

@@ -1,13 +1,13 @@
 package com.gabrielrocha.model;
 
 import com.gabrielrocha.PrincipalInscricao;
+import com.gabrielrocha.util.Id;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Turma implements Serializable {
-    private static int contador = 0;
     private int id;
     private int ano;
     private int periodo;
@@ -18,7 +18,6 @@ public class Turma implements Serializable {
     public Turma(int ano, int periodo, Professor professor, Disciplina disciplina){
         this.professor = professor;
         this.disciplina = disciplina;
-        this.id = ++contador;
         this.ano = ano;
         this.periodo = periodo;
         this.inscricaos = new ArrayList<>();
@@ -26,6 +25,7 @@ public class Turma implements Serializable {
 
     public String toString(){
         return "Numero = " + id + '\n' +
+                "Disciplina = " + disciplina.getNome() + '\n' +
                 "Ano = " + ano + '\n' +
                 "Periodo = " + periodo;
     }
@@ -34,8 +34,13 @@ public class Turma implements Serializable {
         return ano;
     }
 
+    @Id
     public int getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public int getPeriodo() {

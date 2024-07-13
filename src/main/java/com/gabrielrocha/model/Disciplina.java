@@ -1,11 +1,12 @@
 package com.gabrielrocha.model;
 
+import com.gabrielrocha.util.Id;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Disciplina implements Serializable {
-    private static int contador = 0;
     private int id;
     private String nome;
     private int cargaHoraria;
@@ -13,7 +14,6 @@ public class Disciplina implements Serializable {
     private List<Turma> turmas;
 
     public Disciplina(String nome, int cargaHoraria){
-        this.id = ++contador;
         this.nome = nome;
         this.cargaHoraria = cargaHoraria;
         this.requisitos = new ArrayList<>();
@@ -23,11 +23,16 @@ public class Disciplina implements Serializable {
     public String toString(){
         return "Numero = " + id + '\n'+
                 "Nome = " + nome + '\n'+
-                "Carga Horaria = " + cargaHoraria + '\n';
+                "Carga Horaria = " + cargaHoraria;
     }
 
+    @Id
     public int getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getNome() {

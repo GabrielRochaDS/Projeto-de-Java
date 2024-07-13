@@ -1,9 +1,10 @@
 package com.gabrielrocha.model;
 
+import com.gabrielrocha.util.Id;
+
 import java.io.Serializable;
 
 public class Inscricao implements Serializable {
-    private static int contador = 0;
     private int id;
     private int nota;
     private String data;
@@ -11,14 +12,12 @@ public class Inscricao implements Serializable {
     private Turma turma;
 
     public Inscricao(Aluno aluno, Turma turma, String data){
-        this.id = ++contador;
         this.nota = -1;
         this.data = data;
         this.aluno = aluno;
         this.turma = turma;
     }
     public Inscricao(Aluno aluno, Turma turma, String data, int nota){
-        this.id = ++contador;
         this.nota = nota;
         this.data = data;
         this.aluno = aluno;
@@ -26,14 +25,20 @@ public class Inscricao implements Serializable {
     }
 
     public String toString(){
-        return "Numero = " + id + '\n' +
+        return "Turma id = " + id + '\n' +
+                "Disciplina = " + turma.getDisciplina().getNome() + '\n' +
                 "Nota = " + nota + '\n' +
                 "Aluno = " + getAluno().getNome() + '\n' +
                 "Turma: " + '\n' + getTurma().toString() + '\n';
     }
 
+    @Id
     public int getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public int getNota() {

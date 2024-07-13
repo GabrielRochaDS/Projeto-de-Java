@@ -3,12 +3,14 @@ package com.gabrielrocha.dao;
 import java.util.List;
 import java.util.Map;
 
-public interface DAOGenerico<K, V> {
-    V incluir(K id, V obj);
-    V alterar(K id, V obj);
-    Map<K, V> getMap();
-    void setMap(Map<K, V> map);
-    V remover(K id);
-    V recuperarPorId(K id);
+public interface DAOGenerico<V> {
+    Map<Integer, V> getMap();
+    void setMap(Map<Integer, V> map);
+    Integer getContador();
+    void setContador(Integer contador);
+    V incluir(V obj);
+    V alterar(V obj);
+    V remover(Integer id);
+    V recuperarPorId(Integer id);
     List<V> recuperarTodos();
 }

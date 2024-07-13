@@ -15,6 +15,7 @@ public class Principal {
         PrincipalTurma principalTurma = new PrincipalTurma();
         PrincipalProfessor principalProfessor = new PrincipalProfessor();
         PrincipalDisciplina principalDisciplina = new PrincipalDisciplina();
+        PrincipalRelatorio principalRelatorio = new PrincipalRelatorio();
 
         recuperarDados();
 
@@ -27,9 +28,10 @@ public class Principal {
             System.out.println("3. Tratar Turmas");
             System.out.println("4. Tratar Professores");
             System.out.println("5. Tratar Disciplinas");
-            System.out.println("6. Sair");
+            System.out.println("6. Relatorios");
+            System.out.println("7. Sair");
 
-            int opcao = Console.readInt('\n' + "Digite um número entre 1 e 6:");
+            int opcao = Console.readInt('\n' + "Digite um número entre 1 e 7:");
 
             switch (opcao){
                 case 1->{
@@ -47,8 +49,10 @@ public class Principal {
                 case 5->{
                     principalDisciplina.principal();
                 }
-
-                case 6-> {
+                case 6->{
+                    principalRelatorio.principal();
+                }
+                case 7-> {
                     continua = false;
                     salvarDados();
                 }
@@ -66,23 +70,37 @@ public class Principal {
             ProfessorDAO professorDAO = FabricaDeDaos.getDAO(ProfessorDAO.class);
             TurmaDAO turmaDAO = FabricaDeDaos.getDAO(TurmaDAO.class);
 
+
+
+
             FileInputStream fis = new FileInputStream(new File("meusObjetos.txt"));
             ObjectInputStream ois = new ObjectInputStream(fis);
 
             Map<Integer, Aluno> mapDeAlunos = (Map<Integer, Aluno>) ois.readObject();
             alunoDAO.setMap(mapDeAlunos);
+            Integer contadorDeAlunos = (Integer) ois.readObject();
+            alunoDAO.setContador(contadorDeAlunos);
 
             Map<Integer, Disciplina> mapDeDisciplina = (Map<Integer, Disciplina>) ois.readObject();
             disciplinaDAO.setMap(mapDeDisciplina);
+            Integer contadorDeDisciplina = (Integer) ois.readObject();
+            disciplinaDAO.setContador(contadorDeDisciplina);
 
             Map<Integer, Inscricao> mapDeInscricao = (Map<Integer, Inscricao>) ois.readObject();
             inscricaoDAO.setMap(mapDeInscricao);
+            Integer contadorDeInscricao = (Integer) ois.readObject();
+            inscricaoDAO.setContador(contadorDeInscricao);
 
             Map<Integer, Professor> mapDeProfessor = (Map<Integer, Professor>) ois.readObject();
             professorDAO.setMap(mapDeProfessor);
+            Integer contadorDeProfessores = (Integer) ois.readObject();
+            professorDAO.setContador(contadorDeProfessores);
 
             Map<Integer, Turma> mapDeTurma = (Map<Integer, Turma>) ois.readObject();
             turmaDAO.setMap(mapDeTurma);
+            Integer contadorDeTurmas = (Integer) ois.readObject();
+            turmaDAO.setContador(contadorDeTurmas);
+
         } catch (FileNotFoundException e) {
             System.out.println("O arquivo meusObjetos.txt foi criado.");
         } catch (IOException e) {
@@ -106,14 +124,29 @@ public class Principal {
         Map<Integer, Professor> mapDeProfessores = professorDAO.getMap();
         Map<Integer, Turma> mapDeTurmas = turmaDAO.getMap();
 
+        Integer contadorDeAlunos = alunoDAO.getContador();
+        Integer contadorDeDisciplina = disciplinaDAO.getContador();
+        Integer contadorDeInscricao = inscricaoDAO.getContador();
+        Integer contadorDeProfessores = professorDAO.getContador();
+        Integer contadorDeTurmas = turmaDAO.getContador();
+
         try {
             FileOutputStream fos = new FileOutputStream(new File("meusObjetos.txt"));
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(mapDeAlunos);
+            oos.writeObject(contadorDeAlunos);
+
             oos.writeObject(mapDeDisciplina);
+            oos.writeObject(contadorDeDisciplina);
+
             oos.writeObject(mapDeInscicao);
+            oos.writeObject(contadorDeInscricao);
+
             oos.writeObject(mapDeProfessores);
+            oos.writeObject(contadorDeProfessores);
+
             oos.writeObject(mapDeTurmas);
+            oos.writeObject(contadorDeTurmas);
         }
         catch (IOException e) {
             throw new RuntimeException(e);
